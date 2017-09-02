@@ -1,12 +1,21 @@
 import networkx as nx
 from matplotlib import pyplot as pl
 
+
+"""
+    Return a given statistic moment of a graph, where moment is the number of the moment
+"""
 def stat_moment(graph, moment):
 	value = 0
 	for node in graph.nodes_iter():
 		value += graph.degree(node) ** moment
 	return value / graph.number_of_nodes()
 
+
+"""
+    Process a graph, calculating its average degree, variance, second moment and making a 
+    degree historgram (normalized), plotting it at the end
+"""
 def process_graph(graph, name):
 	degree_histogram = nx.degree_histogram(graph)
 	number_of_nodes = nx.number_of_nodes(graph)
@@ -24,21 +33,58 @@ def process_graph(graph, name):
 	pl.loglog(degree_histogram, 'b.')
 	pl.show()
 
-
-Ga = nx.MultiGraph()
-with open('./out.topology', 'rb') as f:
-	next(f,'')
-	for line in f:
-		edges = line.split()
-		for i in range(int(edges[2])):
-			Ga.add_edge(edges[0],edges[1])
-
-Gb = nx.Graph()
-with open('./out.opsahl-powergrid', 'rb') as f:
-	next(f,'')
-	next(f,'')
-	Gb = nx.read_edgelist(f, nodetype=int)
+"""
+    Return the greatest component of a given graph
+"""
+def greatestComponent(graph):
+    return max(nx.connected_component_subgraphs(graph), key = len)
 
 
-process_graph(Ga, 'Internet Topology')
-process_graph(Gb, 'Power Grid')
+""" 
+    Initialize the graphs, where:
+    pathFile: path to where is the file containing edge list 
+    weighted: a bool variable, True if the graph is weighted and False if not
+    directed: a bool variable, True if the graph is directed and False if not
+    jumps: number of lines that need to be jumped so we can reach the list of edges
+
+"""
+def initGraph(pathFile, weighted, directed, jumps):
+    if(directed):
+        graph = nx.DiGraph()
+    else:
+        graph = nx.Graph()
+
+    with open(pathFile, 'rb') as f:
+        for counter in range(jumps):
+            next(f,'')
+        if(weighted):
+            graph = nx.read_edgelist(f, nodetype = int, data=(('weight',int),))
+        else:
+            graph = nx.read_edgelist(f, nodetype = int)
+    if(directed):
+        graph = graph.to_undirected()
+
+    return graph
+
+
+#Social Network
+GraphSHamsterster = initGraph('./connexions/social/hamsterster-friendships.txt', False, False, 1)
+GraphSMiserables = initGraph('./connexions/social/les-miserables.txt', True, False, 2)
+
+#Infrastructure Network
+GraphIPowerGrid = initGraph('./connexions/infrastructure/us-power-grid.txt', False, False, 2)
+
+#Transport Network
+GraphTEuroroad = initGraph('./connexions/transport/euroroad.txt', False, False, 2)
+GraphTAirTraffic = initGraph('./connexions/transport/air-traffic-control.txt', False, True, 1)
+
+#Biologic Network
+GraphBHumanProtein = initGraph('./connexions/biologic/human-protein-(figeys).txt', False, True, 1)
+
+#Calculating the Greates Component of each Graph
+GCHamsterster = greatestComponent(GraphSHamsterster)
+GCMiserables = greatestComponent(GraphSMiserables)
+GCPowerGrid = greatestComponent(GraphIPowerGrid)
+GCEuroroad = greatestComponent(GraphTEuroroad)
+GCAirTraffic = greatestComponent(GraphTAirTraffic)
+GCHumanProtein = greatestComponent(GraphBHumanProtein)
