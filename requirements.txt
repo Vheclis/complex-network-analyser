@@ -1,2 +1,4 @@
 networkx==1.11
 matplotlib==2.0.2
+cython==0.26.1
+plfit==1.0.2
