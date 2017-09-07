@@ -70,14 +70,14 @@ def initGraph(pathFile, weighted, directed, jumps):
 
 
 #Social Network
-GraphSHamsterster = initGraph('./connexions/social/hamsterster.txt', False, False, 1)
+GraphSHamsterster = initGraph('./connexions/social/hamster.txt', False, False, 0)
 
 #Infrastructure Network
-GraphIPowerGrid = initGraph('./connexions/infrastructure/us-power-grid.txt', False, False, 2)
+GraphIPowerGrid = initGraph('./connexions/infrastructure/powergrid.txt', True, False, 0)
 
 #Transport Network
-GraphTEuroroad = initGraph('./connexions/transport/euroroad.txt', False, False, 2)
-GraphTUSAir = initGraph('./connexions/transport/us-airports.txt', True, False, 2) #directed is False because we don't want to change it to undirected
+GraphTEuroroad = initGraph('./connexions/transport/euroroad.txt', False, False, 0)
+GraphTUSAir = initGraph('./connexions/transport/USairports.txt', True, False, 0) #directed is False because we don't want to change it to undirected
 
 #Calculating the Greates Component of each Graph
 GCHamsterster = greatestComponent(GraphSHamsterster)
