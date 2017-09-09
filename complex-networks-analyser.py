@@ -1,5 +1,5 @@
+import powerlaw
 import networkx as nx
-from  plfit import plfit
 from matplotlib import pyplot as pl
 
 
@@ -28,6 +28,13 @@ def process_graph(graph, name):
     m1 = stat_moment(graph, 1)
     m2 = stat_moment(graph, 2)
     variance = m2 - (m1 ** 2)
+    fit = powerlaw.Fit(degree_histogram)
+    alpha = fit.power_law.alpha
+    print('alpha: {:.5f}'.format(alpha))
+    if 2 < alpha < 3:
+        print('The Graph {:s} is scale free'.format(name))
+    else:
+        print('The Graph {:s} isnt scale free'.format(name))
     print('M1: {:.5f}'.format(m1))
     print('M2: {:.5f}'.format(m2))
     print('Variance: {:.5f}'.format(variance))
@@ -85,7 +92,7 @@ GCPowerGrid = greatestComponent(GraphIPowerGrid)
 GCEuroroad = greatestComponent(GraphTEuroroad)
 GCUSAir = greatestComponent(GraphTUSAir)
 
-process_graph(GraphSHamsterster, 'Hamsterstes')
-process_graph(GraphIPowerGrid, 'Power Grid')
-process_graph(GraphTEuroroad, 'Euroroad')
-process_graph(GraphTUSAir, 'US Airport')
+process_graph(GCHamsterster, 'Hamsterstes')
+process_graph(GCPowerGrid, 'Power Grid')
+process_graph(GCEuroroad, 'Euroroad')
+process_graph(GCUSAir, 'US Airport')
