@@ -23,24 +23,36 @@ def process_graph(graph, name):
 
     for index in range(len(degree_histogram)):
         degree_histogram[index] = degree_histogram[index] / number_of_nodes
+    
+    average_degree = 0
+    for node in graph.nodes_iter():
+        average_degree += graph.degree(node)
 
-
+    average_degree /= number_of_nodes
+    average_min_path = nx.average_shortest_path_length(graph)
     m1 = stat_moment(graph, 1)
     m2 = stat_moment(graph, 2)
     variance = m2 - (m1 ** 2)
     fit = powerlaw.Fit(degree_histogram)
     alpha = fit.power_law.alpha
-    print('alpha: {:.5f}'.format(alpha))
+    diameter = nx.diameter(graph)
+
+    print('\n====== Graph {:s} ======'.format(name) )
+    print('Alpha: {:.5f}'.format(alpha))
     if 2 < alpha < 3:
-        print('The Graph {:s} is scale free'.format(name))
+        print('The Graph is scale free')
     else:
-        print('The Graph {:s} isnt scale free'.format(name))
-    print('M1: {:.5f}'.format(m1))
-    print('M2: {:.5f}'.format(m2))
+        print('The Graph isnt scale free')
+    print('Number of Nodes: {:.5f}'.format(number_of_nodes))
+    print('Average Degree {:.5f}'.format(average_degree))
+    print('Second Moment: {:.5f}'.format(m2))
     print('Variance: {:.5f}'.format(variance))
-    pl.title('Degree distribution: '+ name)
-    pl.loglog(degree_histogram, 'b.')
-    pl.show()
+    print('Diameter: {:.5f}'.format(diameter))
+    print('Average Shortest Paths: {:.5f}'.format(average_min_path))
+    print('============================\n\n')
+    #pl.title('Degree distribution: '+ name)
+    #pl.loglog(degree_histogram, 'b.')   
+    #pl.show()
 
 """
     Return the greatest component of a given graph
@@ -75,22 +87,14 @@ def initGraph(pathFile, weighted, directed, jumps):
 
     return graph
 
-
-#Social Network
-GraphSHamsterster = initGraph('./connexions/social/hamster.txt', False, False, 0)
-
-#Infrastructure Network
-GraphIPowerGrid = initGraph('./connexions/infrastructure/powergrid.txt', True, False, 0)
-
-#Transport Network
-GraphTEuroroad = initGraph('./connexions/transport/euroroad.txt', False, False, 0)
-GraphTUSAir = initGraph('./connexions/transport/USairports.txt', True, False, 0) #directed is False because we don't want to change it to undirected
-
 #Calculating the Greates Component of each Graph
-GCHamsterster = greatestComponent(GraphSHamsterster)
-GCPowerGrid = greatestComponent(GraphIPowerGrid)
-GCEuroroad = greatestComponent(GraphTEuroroad)
-GCUSAir = greatestComponent(GraphTUSAir)
+#Social Network
+GCHamsterster = greatestComponent(initGraph('./connexions/social/hamster.txt', False, False, 0))
+#Infrastructure Network
+GCPowerGrid = greatestComponent(initGraph('./connexions/infrastructure/powergrid.txt', True, False, 0))
+#Transport Network
+GCEuroroad = greatestComponent(initGraph('./connexions/transport/euroroad.txt', False, False, 0))
+GCUSAir = greatestComponent(initGraph('./connexions/transport/USairports.txt', True, False, 0))
 
 process_graph(GCHamsterster, 'Hamsterstes')
 process_graph(GCPowerGrid, 'Power Grid')
