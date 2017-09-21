@@ -4,7 +4,8 @@ from matplotlib import pyplot as pl
 
 
 """
-    Return a given statistic moment of a graph, where moment is the number of the moment
+    Return a given statistic moment of a graph, where moment is the number of
+    the moment
 """
 def stat_moment(graph, moment):
     value = 0
@@ -14,8 +15,8 @@ def stat_moment(graph, moment):
 
 
 """
-    Process a graph, calculating its average degree, variance, second moment and making a 
-    degree historgram (normalized), plotting it at the end
+    Process a graph, calculating its average degree, variance, second moment and
+    making a degree historgram (normalized), plotting it at the end
 """
 def process_graph(graph, name):
     degree_histogram = nx.degree_histogram(graph)
@@ -23,7 +24,7 @@ def process_graph(graph, name):
 
     for index in range(len(degree_histogram)):
         degree_histogram[index] = degree_histogram[index] / number_of_nodes
-    
+
     average_degree = 0
     for node in graph.nodes_iter():
         average_degree += graph.degree(node)
@@ -36,6 +37,7 @@ def process_graph(graph, name):
     fit = powerlaw.Fit(degree_histogram)
     alpha = fit.power_law.alpha
     diameter = nx.diameter(graph)
+    average_cluster_coeff = nx.average_clustering(graph)
 
     print('\n====== Graph {:s} ======'.format(name) )
     print('Alpha: {:.5f}'.format(alpha))
@@ -47,11 +49,12 @@ def process_graph(graph, name):
     print('Average Degree {:.5f}'.format(average_degree))
     print('Second Moment: {:.5f}'.format(m2))
     print('Variance: {:.5f}'.format(variance))
-    print('Diameter: {:.5f}'.format(diameter))
+    print('Average Cluster Coefficient: {:.5f}'.format(average_cluster_coeff))
     print('Average Shortest Paths: {:.5f}'.format(average_min_path))
+    print('Diameter: {:.5f}'.format(diameter))
     print('============================\n\n')
     #pl.title('Degree distribution: '+ name)
-    #pl.loglog(degree_histogram, 'b.')   
+    #pl.loglog(degree_histogram, 'b.')
     #pl.show()
 
 """
@@ -61,12 +64,14 @@ def greatestComponent(graph):
     return max(nx.connected_component_subgraphs(graph), key = len)
 
 
-""" 
+"""
     Initialize the graphs, where:
-    pathFile: path to where is the file containing edge list 
-    weighted: a bool variable, True if the graph is weighted and False if not
-    directed: a bool variable, True if the graph is directed and False if not (it's used if you want to turn the graph to undirected)
-    jumps: number of lines that need to be jumped so we can reach the list of edges
+    pathFile: path to where is the file containing edge list ;
+    weighted: a bool variable, True if the graph is weighted and False if not;
+    directed: a bool variable, True if the graph is directed and False if not
+        (it's used if you want to turn the graph to undirected);
+    jumps: number of lines that need to be jumped so we can reach the list of
+        edges.
 
 """
 def initGraph(pathFile, weighted, directed, jumps):
